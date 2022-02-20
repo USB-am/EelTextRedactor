@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-from datetime import datetime
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox as mb
+from datetime import datetime
 
 
 class FolderElement:
@@ -39,6 +39,25 @@ class FolderElement:
 		return os.path.isfile(self.absolute_path)
 
 
+def get_elements_from_folder(path: str) -> tuple:
+	result = (FolderElement(path, name) for name in os.listdir(path))
+
+	return result
+
+
+def sorted_folder_elements(folder_elements_attrs: tuple) -> tuple:
+	result = sorted(folder_elements_attrs,
+		key=lambda element: (element[2], element[0])
+	)
+	return result
+
+
+def get_folder_elements_attrs(elements: tuple[FolderElement]) -> tuple:
+	result = []
+	for element in elements:
+		result.append(element.get_attrs())
+
+
 class FolderTreeview(tk.Frame):
 	HEADINGS_NAMES = ('Name', 'Date', 'Type')
 
@@ -64,7 +83,7 @@ class FolderTreeview(tk.Frame):
 	def selected(self, event):
 		pass
 
-	def insertElements(self, path):
+	def insertElements(self, path: str) -> None:
 		def sort_elements_to_types(elements: tuple) -> tuple:
 			result = sorted(elements,
 				key=lambda element: (element[2], element[0])
@@ -158,13 +177,13 @@ class Manager(tk.Tk):
 			mb.showerror('OSError!', 'Incorrect path!')
 
 
-	def check_valid_dir(self, path):
+	def check_valid_dir(self, path: str):
 		if os.path.exists(path) and os.path.isdir(path):
 			return True
 		return False
 
 
-	def check_valid(self, path):
+	def check_valid(self, path: str):
 		# TODO: сделать нормально
 		if os.path.exists(path):
 			if os.path.isfile(path):
@@ -178,6 +197,7 @@ class Manager(tk.Tk):
 			return False
 
 	def returnSelectedPath(self, event):
+		print(f'Event has type "{type(event)}"')
 		path = self.interface.global_path.get()
 
 		if self.check_valid(path):
