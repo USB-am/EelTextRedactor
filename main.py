@@ -4,13 +4,15 @@ import tkinter as tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 import eel
 
+from FileManager import askOpenFileName
+
 
 eel.init('web')
 
 
 @eel.expose
 def create_file():
-	path = 'PATH'
+	path = askOpenFileName()
 
 	return path
 
